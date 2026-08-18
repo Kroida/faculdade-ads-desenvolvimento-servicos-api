@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 01</title>
+</head>
+
+<body>
+    <h1 id="meuh1">Aula 01</h1>
+    <button onclick="alterar()">Alterar</button>
+    <div id="minhaDiv">Jair</div>
+
+    <hr>
+    <script>
+        function alterar() {
+            let minhaDiv = document.getElementById("minhaDiv");
+            minhaDiv.style.background = "#00f";
+            minhaDiv.style.color = "#fff";
+            minhaDiv.style.width = "50%";
+            minhaDiv.innerHTML += "<u> Bolsonaro </u>";
+        };
+
+        document.write("<h1> Ashuesha </h1>");
+        document.getElementById("meuh1").innerText = "Aula01 <i>JS</i>";
+    </script>
+</body>
+
+</html>
