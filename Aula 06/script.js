@@ -26,7 +26,35 @@ function getDados() {
     req.send();
 }
 
-function getProdutos() {
+function salvar() {
+    const txtNome = document.getElementById("txtNome").value;
+    const txtPreco = parseFloat(document.getElementById("txtPreco").value.replace(",", "."));
+
+    if (txtNome == "" || isNaN(txtPreco)) {
+        alert("O campo é obrigatório");
+    } else {
+        const req = new XMLHttpRequest();
+
+        req.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const objJSON = JSON.parse(this.responseText);
+                var txt = objJSON.resposta;
+
+                if (objJSON.id) {
+                    txt += "\nID: " + objJSON.id;
+                    getProdutos();
+                    alert(txt);
+                }
+            }
+        }
+
+        req.open("POST", "servidor.php?inserir");
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send(`name=${txtNome}&price=${txtPreco}`);
+    }
+}
+
+function buscar() {
     const req = new XMLHttpRequest();
     var txt = "";
 
@@ -41,16 +69,39 @@ function getProdutos() {
                         <td>${prod.nome}</td>
                         <td>${prod.preco}</td>
                         <td>
-                        <button onclick="editar(${prod.id})">X</button>
+                            <button onclick="editar(${prod.id})">🖊️</button>
+                        </td>
+                        <td>
+                            <button onclick="excluir(${prod.id})">🗑️</button>
                         </td>
                     </tr>
                 `;
             })
+            document.querySelector("#tblProdutos tbody").innerHTML = txt;
         }
     }
 
     req.open("GET", "servidor.php?buscar", true);
     req.send();
+}
+
+function editar(idProd) {
+    txtNome = prompt("Digite o novo nome: ");
+    txtPreco = parseFloat(prompt("Digite o nome preço: ").replace(",", "."));
+
+    const req = new XMLHttpRequest();
+
+    req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            const objJSON = JSON.parse(this.responseText);
+            alert(objJSON.resposta);
+            getProdutos();
+        }
+    }
+
+    req.open("POST", "servidor.php?editar&idProduto=" + idProd);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send(`name=${txtNome}&price=${txtPreco}`);
 }
 
 function excluir(idProd) {
@@ -69,39 +120,5 @@ function excluir(idProd) {
 
         req.open("GET", "servidor.php?excluir&idProduto=" + idProd);
         req.send();
-    }
-}
-
-function salvar() {
-    const txtNome = document.getElementById("txtNome");
-    const txtPreco = document.getElementById("txtPreco");
-
-    if (txtNome.value == "") {
-        alert("O campo nome é obrigatório");
-    } else {
-        var preco = 0.0;
-
-        if (txtPreco.value != "") {
-            preco = parseFloat(txtPreco.value.replace(",", "."));
-        }
-
-        const req = new XMLHttpRequest();
-
-        req.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                const objJSON = JSON.parse(this.responseText);
-                var txt = objJSON.resposta;
-
-                if (objJSON.id) {
-                    txt += "\nID" + objJSON.id;
-                    alert(txt);
-                    getProdutos();
-                }
-            }
-        }
-
-        req.open("POST", "servidor.php?inserir");
-        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        req.send(`name=${txtNome.value}&price=${preco}`);
     }
 }
